@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# figure out which directory we are stored in
+# https://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+_GITNONYMOUS_SRC="${BASH_SOURCE[0]}"
+# resolve $_GITNONYMOUS_SRC until the file is no longer a symlink
+while [ -h "$_GITNONYMOUS_SRC" ]; do
+  dir="$( cd -P "$( dirname "$_GITNONYMOUS_SRC" )" && pwd )"
+  _GITNONYMOUS_SRC="$(readlink "$_GITNONYMOUS_SRC")"
+  # if $_GITNONYMOUS_SRC was a relative symlink, we need to resolve it
+  # relative to the path where the symlink file was located
+  [[ $_GITNONYMOUS_SRC != /* ]] && _GITNONYMOUS_SRC="$DIR/$_GITNONYMOUS_SRC"
+done
+dir="$( cd -P "$( dirname "$_GITNONYMOUS_SRC" )" && pwd )"
+unset _GITNONYMOUS_SRC
+
+# set up our other variables
+confdir="${HOME}/.gitnonymous-${1}"
+sshfile="${confdir}/ssh/id_rsa"
+configfile="${confdir}/config"
+sshwrapperfile="${confdir}/git-ssh-wrap"
+
+if [ "$1" = "" ]
+then
+  echo "Usage: $0 KEYNAME"
+else
+  comment="${1}@anonymous"
+  echo "-> Creating ${confdir}."
+  mkdir -p "${confdir}/ssh"
+  echo "-> Creating SSH key '${sshfile}'."
+  echo "SSH key comment (public) is '${comment}'."
+  ssh-keygen -C "${comment}" -f "${sshfile}"
+  echo "-> Creating SSH wrapper '${sshwrapperfile}'."
+  cat "${dir}/git-ssh-wrap" | sed "s/KEYNAME/${1}/" > "${sshwrapperfile}"
+  chmod 755 "${sshwrapperfile}"
+  echo "-> Creating config file '${configfile}'."
+  cp ${dir}/config "${configfile}"
+fi

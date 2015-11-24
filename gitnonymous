@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+# See the README for instructions setting up.
+# ./make-anonymous-key KEYNAME
+
+# figure out which directory we are stored in
+# https://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+_GITNONYMOUS_SRC="${BASH_SOURCE[0]}"
+# resolve $_GITNONYMOUS_SRC until the file is no longer a symlink
+while [ -h "$_GITNONYMOUS_SRC" ]; do
+  dir="$( cd -P "$( dirname "$_GITNONYMOUS_SRC" )" && pwd )"
+  _GITNONYMOUS_SRC="$(readlink "$_GITNONYMOUS_SRC")"
+  # if $_GITNONYMOUS_SRC was a relative symlink, we need to resolve it
+  # relative to the path where the symlink file was located
+  [[ $_GITNONYMOUS_SRC != /* ]] && _GITNONYMOUS_SRC="$DIR/$_GITNONYMOUS_SRC"
+done
+dir="$( cd -P "$( dirname "$_GITNONYMOUS_SRC" )" && pwd )"
+unset _GITNONYMOUS_SRC
+
+gitnonymous_usage () {
+  if [ "$1" != "" ]
+  then
+    gitnonymous_error "Don't call this script directly. 'Source' it instead."
+  fi
+  echo "Usage:"
+  echo ". ${BASH_SOURCE[0]} KEYNAME"
+}
+
+# function to throw error messages
+gitnonymous_error () {
+  >&2 echo $@
+}
+
+# when we are missing a config file call this
+gitnonymous_error_missing () {
+  gitnonymous_error $@
+  gitnonymous_error "To create it run: ${dir}/gitnonymous-setup ${keyname}"
+}
+
+# Make sure we were called with 'source' instead of directly
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]
+then
+  # check for the keyname parameter
+  if [ "$1" = "" ]
+  then
+    gitnonymous_usage
+    return 1
+  else
+    # set the key and the config file
+    keyname="${1}"
+    rootdir="${HOME}/.gitnonymous-${keyname}"
+    configfile="${rootdir}/config"
+    sshdir="${rootdir}/ssh"
+    oldenvfile="${rootdir}/previous-environment"
+    
+    if [ "$_GITNONYMOUS" != "" ]
+    # toggle everything off again
+    then
+      echo "Unsetting gitnonymous environment ${keyname}"
+      # kill our special ssh agent
+      ssh-agent -k
+      # restore the command prompt
+      export PS1="${_GITNONYMOUS_OLDPS1}"
+      unset GIT_COMMITTER_EMAIL
+      unset GIT_COMMITTER_NAME
+      unset GIT_AUTHOR_EMAIL
+      unset GIT_AUTHOR_NAME
+      unset GIT_SSH
+      unset GIT_PROXY_COMMAND
+      unset ALL_PROXY
+      # restore any GIT_ environment variables set before
+      . "${oldenvfile}"
+      # unset our environment variables we set
+      unset _GITNONYMOUS_OLDPS1
+      unset _GITNONYMOUS
+      echo "Done unsetting ${keyname}."
+    else
+      # add our custom local SSH key (make the key with ./make-anonymous-key)
+      if [ -f ${sshdir}/id_rsa ]
+      then
+        # start a new SSH agent just for this session
+        eval $(ssh-agent -a "${sshdir}/.ssh-agent")
+        # add the key
+        ssh-add ${sshdir}/id_rsa
+      else
+        gitnonymous_error_missing "SSH config in ${sshdir} not found!"
+        return 3
+      fi
+      
+      # load the user's anonymous GIT settings and environment
+      if [ -f "${configfile}" ]
+      then
+        # save the old GIT values
+        export | grep -E "GIT_|ALL_PROXY" > ${oldenvfile}
+        # source the config file
+        .  "${configfile}"
+      else
+        gitnonymous_error_missing "GIT config in ${configfile} not found!"
+        return 4
+      fi
+      
+      # trap exit of this shell and kill ssh-agent
+      trap 'ssh-agent -k' EXIT
+      
+      # tell GIT to use our customised anonymous SSH wrapper
+      export GIT_SSH="${rootdir}/git-ssh-wrap"
+      
+      # tell GIT to use the tor proxy for all other traffic
+      export GIT_PROXY_COMMAND="${dir}/git-proxy-command"
+      export ALL_PROXY="socks5://127.0.0.1:9050"
+      
+      # make it obvious we're in a special environment
+      _GITNONYMOUS_OLDPS1="${PS1}"
+      export PS1="${keyname}⚔ ${PS1}"
+      export _GITNONYMOUS="${keyname}"
+    fi
+  fi
+else
+  gitnonymous_usage true
+  exit 2
+fi

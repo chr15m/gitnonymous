@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+ssh -i "${HOME}/.gitnonymous-KEYNAME/ssh/id_rsa" -o ProxyCommand="nc -X 5 -x localhost:9050 %h %p" $@
