@@ -1,4 +1,4 @@
-Contribute ~anonymously~ pseudonymously to Git repositories over Tor.
+Contribute ~~anonymously~~ pseudonymously to Git repositories over Tor.
 
 ## tl;dr ##
 
@@ -16,7 +16,7 @@ Before you start, you'll probably want to:
  * Set up an anonymous email account with some provider.
  * Sign up to the Git hosting service you use with that anonymous email address.
 
-To configure a new ~anonymous~ pseudonymous identity on your machine:
+To configure a new ~~anonymous~~ pseudonymous identity on your machine:
 
 	$ ./gitnonymous-setup KEYNAME
 
