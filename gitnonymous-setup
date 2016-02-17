@@ -35,4 +35,7 @@ else
   chmod 755 "${sshwrapperfile}"
   echo "-> Creating config file '${configfile}'."
   cp ${dir}/config "${configfile}"
+  echo
+  echo " *** You should now edit '${configfile}' and set your own username and email. ***"
+  echo
 fi
