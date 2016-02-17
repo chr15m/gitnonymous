@@ -68,6 +68,7 @@ then
       unset GIT_SSH
       unset GIT_PROXY_COMMAND
       unset ALL_PROXY
+      unset TZ
       # restore any GIT_ environment variables set before
       . "${oldenvfile}"
       # unset our environment variables we set
@@ -91,7 +92,7 @@ then
       if [ -f "${configfile}" ]
       then
         # save the old GIT values
-        export | grep -E "GIT_|ALL_PROXY" > ${oldenvfile}
+        export | grep -E "GIT_|ALL_PROXY|TZ" > ${oldenvfile}
         # source the config file
         .  "${configfile}"
       else

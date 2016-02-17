@@ -30,6 +30,7 @@ Then you should edit the new file in `~/.gitnonymous-KEYNAME/config` to set the 
 	export GIT_COMMITTER_EMAIL="protect-all-babies@anonymous-mail-provider.com"
 	export GIT_AUTHOR_NAME="Baby Protector"
 	export GIT_AUTHOR_EMAIL="protect-all-babies@anonymous-mail-provider.com"
+	export TZ=UTC
 
 ## Use ##
 
@@ -48,6 +49,7 @@ This command:
  * Sets the `GIT_COMMITTER` and `GIT_AUTHOR` environment variables.
  * Sets the `GIT_SSH` environment variable to point at a configured `git-ssh-wrap` script.
  * Sets the `GIT_PROXY_COMMAND` environment variable to proxy network requests through tor.
+ * Sets the `TZ` environment variable to `UTC` in order to obscure your real timezone.
 
 Your prompt will be updated to reflect the configured environment:
 
@@ -64,7 +66,6 @@ Or just exit the current shell.
 
 Whilst this will help you adopt a pseudonymous virtual identity, you should be aware of the following information leaks that may still be used to try to identify you, pointed out by @ryancdotorg on Hacker News:
 
- * Your timezone will appear in Git commits (narrows down location).
  * Commit times will be leaked (narrows down sleeping/working hours).
  * SSH client version will be leaked to servers you connect to (shows Linux distro version and patch level).
 
