@@ -52,6 +52,7 @@ then
     configfile="${rootdir}/config"
     sshdir="${rootdir}/ssh"
     oldenvfile="${rootdir}/previous-environment"
+    sshagentsocket="${sshdir}/.ssh-agent-$$"
     
     if [ "$_GITNONYMOUS" != "" ]
     # toggle everything off again
@@ -79,8 +80,15 @@ then
       # add our custom local SSH key (make the key with ./make-anonymous-key)
       if [ -f ${sshdir}/id_rsa ]
       then
+        # if a stale socket already exists then throw an error
+        if [ -f "${sshagentsocket}" ]
+        then
+          gitnonymous_error "Stale SSH agent socket '${sshagentsocket}' exists."
+          gitnonymous_error "You can probably delete it safely and try again."
+          return 2
+        fi
         # start a new SSH agent just for this session
-        eval $(ssh-agent -a "${sshdir}/.ssh-agent")
+        eval $(ssh-agent -a "${sshagentsocket}")
         # add the key
         ssh-add ${sshdir}/id_rsa
       else
