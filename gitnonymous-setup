@@ -22,16 +22,18 @@ sshwrapperfile="${confdir}/git-ssh-wrap"
 
 if [ "$1" = "" -o '-h' = "$1" -o '--help' = "$1" ]
 then
-  echo "Usage: $0 KEYNAME"
+  echo "Usage: $0 KEYNAME [SSH-KEYGEN-PARAMETERS]"
 else
-  comment="${1}@anonymous"
+  id="${1}"
+  shift
+  comment="id@anonymous"
   echo "-> Creating ${confdir}."
   mkdir -p "${confdir}/ssh"
   echo "-> Creating SSH key '${sshfile}'."
   echo "SSH key comment (public) is '${comment}'."
-  ssh-keygen -C "${comment}" -f "${sshfile}"
+  ssh-keygen -C "${comment}" -f "${sshfile}" "$@"
   echo "-> Creating SSH wrapper '${sshwrapperfile}'."
-  cat "${dir}/git-ssh-wrap" | sed "s/KEYNAME/${1}/" > "${sshwrapperfile}"
+  cat "${dir}/git-ssh-wrap" | sed "s/KEYNAME/${id}/" > "${sshwrapperfile}"
   chmod 755 "${sshwrapperfile}"
   echo "-> Creating config file '${configfile}'."
   cp ${dir}/config "${configfile}"
