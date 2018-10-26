@@ -35,7 +35,12 @@ else
   chmod 755 "${sshwrapperfile}"
   echo "-> Creating config file '${configfile}'."
   cp ${dir}/config "${configfile}"
+  echo "-> Pubkey follows:"
   echo
-  echo " *** You should now edit '${configfile}' and set your own username and email. ***"
+  cat ${sshfile}.pub
   echo
+  echo " *** You should now edit '${configfile}' and set your own pseudonymous username and email. ***"
+  echo
+  echo "-> To use your new identity:"
+  echo ". ${0/-setup/} ${id}"
 fi
