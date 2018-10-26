@@ -59,9 +59,9 @@ Your prompt will be updated to reflect the configured environment:
 
 	KEYNAME⚔ yourname@yourbox:~$
 
-To deactivate the gitnonymous environment run the same command again:
+To deactivate the gitnonymous environment run `gitnonymous-exit`:
 
-	KEYNAME⚔ yourname@yourbox:~$ . gitnonymous KEYNAME
+	KEYNAME⚔ yourname@yourbox:~$ gitnonymous-exit
 	yourname@yourbox:~$ _
 
 Or just exit the current shell.
@@ -70,7 +70,7 @@ Or just exit the current shell.
 
 Whilst this will help you adopt a pseudonymous virtual identity, you should be aware of the following information leaks that may still be used to try to identify you, pointed out by @ryancdotorg on Hacker News:
 
- * Commit times will be leaked (narrows down sleeping/working hours).
+ * Commit times will be leaked (narrows down sleeping/working hours), although timezone is not exposed.
  * SSH client version will be leaked to servers you connect to (shows Linux distro version and patch level).
 
 ## Dependencies ##

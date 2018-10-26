@@ -75,6 +75,7 @@ then
       # unset our environment variables we set
       unset _GITNONYMOUS_OLDPS1
       unset _GITNONYMOUS
+      unalias "gitnonymous-exit"
       echo "Done unsetting ${keyname}."
     else
       # add our custom local SSH key (make the key with ./make-anonymous-key)
@@ -127,6 +128,10 @@ then
       _GITNONYMOUS_OLDPS1="${PS1}"
       export PS1="${keyname}⚔ ${PS1}"
       export _GITNONYMOUS="${keyname}"
+
+      echo "Run 'gitnonymous-exit' to exit this identity."
+      # alias exit command
+      alias "gitnonymous-exit"=". ${BASH_SOURCE[0]} ${keyname}"
     fi
   fi
 else
