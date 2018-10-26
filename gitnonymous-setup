@@ -20,7 +20,7 @@ sshfile="${confdir}/ssh/id_rsa"
 configfile="${confdir}/config"
 sshwrapperfile="${confdir}/git-ssh-wrap"
 
-if [ "$1" = "" ]
+if [ "$1" = "" -o '-h' = "$1" -o '--help' = "$1" ]
 then
   echo "Usage: $0 KEYNAME"
 else
