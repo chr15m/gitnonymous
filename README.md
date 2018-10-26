@@ -32,6 +32,10 @@ Then you should edit the new file in `~/.gitnonymous-KEYNAME/config` to set the 
 	export GIT_AUTHOR_EMAIL="protect-all-babies@anonymous-mail-provider.com"
 	export TZ=UTC
 
+You can pass `ssh-keygen` options to the setup command as well. For example to create an ed25519 key instead of an RSA key:
+
+	$ ./gitnonymous-setup KEYNAME -t ed25519
+
 ## Use ##
 
 You can symlink the `gitnonymous` and `gitnonymous-setup` commands into your `~/bin` folder or somewhere else on your `PATH` to execute them without typing the full path.
