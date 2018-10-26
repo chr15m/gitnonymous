@@ -78,7 +78,7 @@ then
       echo "Done unsetting ${keyname}."
     else
       # add our custom local SSH key (make the key with ./make-anonymous-key)
-      if [ -f ${sshdir}/id_rsa ]
+      if [ -f ${sshdir}/id_rsa -o -f ${sshdir}/identity ]
       then
         # if a stale socket already exists then throw an error
         if [ -f "${sshagentsocket}" ]
@@ -90,7 +90,12 @@ then
         # start a new SSH agent just for this session
         eval $(ssh-agent -a "${sshagentsocket}")
         # add the key
-        ssh-add ${sshdir}/id_rsa
+        if [ -f ${sshdir}/id_rsa ]
+        then
+          ssh-add ${sshdir}/id_rsa
+        else
+          ssh-add ${sshdir}/identity
+        fi
       else
         gitnonymous_error_missing "SSH config in ${sshdir} not found!"
         return 3

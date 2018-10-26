@@ -16,7 +16,7 @@ unset _GITNONYMOUS_SRC
 
 # set up our other variables
 confdir="${HOME}/.gitnonymous-${1}"
-sshfile="${confdir}/ssh/id_rsa"
+sshfile="${confdir}/ssh/identity"
 configfile="${confdir}/config"
 sshwrapperfile="${confdir}/git-ssh-wrap"
 
