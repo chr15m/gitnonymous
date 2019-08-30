@@ -9,6 +9,8 @@ Contribute ~~anonymously~~ pseudonymously to Git repositories over Tor.
 
 This is a tool for management of identities that you can use to obfuscate your true identity when making Git commits and pushing to public repositories.
 
+[Non-GH mirror of gitnonymous here](https://gitea.mccormick.cx/chr15m/gitnonymous).
+
 ## Setup ##
 
 Before you start, you'll probably want to:
